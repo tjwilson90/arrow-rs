@@ -1963,8 +1963,14 @@ mod tests {
         check_bloom_filter(
             files,
             "col".to_string(),
-            many_vecs,
-            vec![vec![(SMALL_SIZE + 1) as u8]],
+            vec![
+                vec![0xff_u8, 0, 1, 2],
+                vec![0, 1, 2, 3],
+                vec![1, 2, 3, 4],
+                vec![2, 3, 4, 5],
+                vec![4, 5, 6, 0xff],
+            ],
+            vec![vec![0_u8, 1, 2, 3, 4], vec![1, 2, 3, 3]],
         );
     }
 
@@ -1981,11 +1987,16 @@ mod tests {
 
         let optional_raw_values: Vec<_> = raw_values
             .iter()
-            .enumerate()
-            .filter_map(|(i, v)| if i % 2 == 0 { None } else { Some(v.as_str()) })
+            .flat_map(|v| {
+                vec![
+                    vec![0xff, v.as_bytes()[0], 0xff, 0xff],
+                    vec![0xff, 0xff, v.as_bytes()[0], 0xff],
+                ]
+                .into_iter()
+            })
             .collect();
         // For null slots, empty string should not be in bloom filter.
-        check_bloom_filter(files, "col".to_string(), optional_raw_values, vec![""]);
+        check_bloom_filter(files, "col".to_string(), optional_raw_values, vec![vec![]]);
     }
 
     #[test]

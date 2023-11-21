@@ -30,9 +30,10 @@ use crate::thrift::{TCompactSliceInputProtocol, TSerializable};
 use bytes::Bytes;
 use std::hash::Hasher;
 use std::io::Write;
-use std::sync::Arc;
 use thrift::protocol::{TCompactOutputProtocol, TOutputProtocol};
 use twox_hash::XxHash64;
+
+pub mod ngram;
 
 /// Salt as defined in the [spec](https://github.com/apache/parquet-format/blob/master/BloomFilter.md#technical-approach).
 const SALT: [u32; 8] = [
@@ -250,9 +251,9 @@ impl Sbbf {
     }
 
     /// Read a new bloom filter from the given offset in the given reader.
-    pub(crate) fn read_from_column_chunk<R: ChunkReader>(
+    pub fn read_from_column_chunk<R: ChunkReader>(
         column_metadata: &ColumnChunkMetaData,
-        reader: Arc<R>,
+        reader: &R,
     ) -> Result<Option<Self>, ParquetError> {
         let offset: u64 = if let Some(offset) = column_metadata.bloom_filter_offset() {
             offset
@@ -312,7 +313,7 @@ impl Sbbf {
     }
 
     /// Insert a hash into the filter
-    fn insert_hash(&mut self, hash: u64) {
+    pub(crate) fn insert_hash(&mut self, hash: u64) {
         let block_index = self.hash_to_block_index(hash);
         self.0[block_index].insert(hash as u32)
     }
@@ -320,6 +321,13 @@ impl Sbbf {
     /// Check if an [AsBytes] value is probably present or definitely absent in the filter
     pub fn check<T: AsBytes>(&self, value: &T) -> bool {
         self.check_hash(hash_as_bytes(value))
+    }
+
+    /// Check if all of the given ngam hashes are in the filter. May return true
+    /// for hashes that were never inserted ("false positive") but will always
+    /// return false if a hash has not been inserted.
+    pub fn check_ngram_hashes(&self, hashes: &[u64]) -> bool {
+        hashes.iter().all(|hash| self.check_hash(*hash))
     }
 
     /// Check if a hash is in the filter. May return
@@ -339,6 +347,52 @@ fn hash_as_bytes<A: AsBytes + ?Sized>(value: &A) -> u64 {
     let mut hasher = XxHash64::with_seed(SEED);
     hasher.write(value.as_bytes());
     hasher.finish()
+}
+
+pub fn ngram_hashes_as_bytes<A: AsBytes + ?Sized>(
+    value: &A,
+    start: bool,
+    end: bool,
+) -> impl Iterator<Item = u64> + '_ {
+    let value = value.as_bytes();
+    value
+        .windows(4)
+        .map(hash_as_bytes)
+        .chain(start.then(|| {
+            #[allow(clippy::get_first)]
+            hash_as_bytes(
+                [
+                    0xff,
+                    *value.get(0).unwrap_or(&0xff),
+                    *value.get(1).unwrap_or(&0xff),
+                    *value.get(2).unwrap_or(&0xff),
+                ]
+                .as_slice(),
+            )
+        }))
+        .chain(end.then(|| {
+            hash_as_bytes(
+                [
+                    value
+                        .len()
+                        .checked_sub(3)
+                        .map(|idx| value[idx])
+                        .unwrap_or(0xff),
+                    value
+                        .len()
+                        .checked_sub(2)
+                        .map(|idx| value[idx])
+                        .unwrap_or(0xff),
+                    value
+                        .len()
+                        .checked_sub(1)
+                        .map(|idx| value[idx])
+                        .unwrap_or(0xff),
+                    0xff,
+                ]
+                .as_slice(),
+            )
+        }))
 }
 
 #[cfg(test)]

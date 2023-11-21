@@ -16,6 +16,7 @@
 // under the License.
 
 use crate::basic::Encoding;
+use crate::bloom_filter::ngram::SbbfBuilder;
 use crate::bloom_filter::Sbbf;
 use crate::column::writer::encoder::{ColumnValueEncoder, DataPageValues, DictionaryPage};
 use crate::data_type::{AsBytes, ByteArray, Int32Type};
@@ -381,7 +382,7 @@ pub struct ByteArrayEncoder {
     dict_encoder: Option<DictEncoder>,
     min_value: Option<ByteArray>,
     max_value: Option<ByteArray>,
-    bloom_filter: Option<Sbbf>,
+    bloom_filter: Option<SbbfBuilder>,
 }
 
 impl ColumnValueEncoder for ByteArrayEncoder {
@@ -406,7 +407,7 @@ impl ColumnValueEncoder for ByteArrayEncoder {
     }
 
     fn flush_bloom_filter(&mut self) -> Option<Sbbf> {
-        self.bloom_filter.take()
+        self.bloom_filter.take().map(|builder| builder.build())
     }
 
     fn try_new(descr: &ColumnDescPtr, props: &WriterProperties) -> Result<Self>
@@ -421,8 +422,7 @@ impl ColumnValueEncoder for ByteArrayEncoder {
 
         let bloom_filter = props
             .bloom_filter_properties(descr.path())
-            .map(|props| Sbbf::new_with_ndv_fpp(props.ndv, props.fpp))
-            .transpose()?;
+            .map(|_props| SbbfBuilder::default());
 
         Ok(Self {
             fallback,

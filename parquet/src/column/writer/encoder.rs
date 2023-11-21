@@ -19,6 +19,7 @@ use bytes::Bytes;
 use half::f16;
 
 use crate::basic::{Encoding, LogicalType, Type};
+use crate::bloom_filter::ngram::SbbfBuilder;
 use crate::bloom_filter::Sbbf;
 use crate::column::writer::{
     compare_greater, fallback_encoding, has_dictionary_support, is_nan, update_max, update_min,
@@ -132,7 +133,7 @@ pub struct ColumnValueEncoderImpl<T: DataType> {
     statistics_enabled: EnabledStatistics,
     min_value: Option<T::T>,
     max_value: Option<T::T>,
-    bloom_filter: Option<Sbbf>,
+    bloom_filter: Option<SbbfBuilder>,
 }
 
 impl<T: DataType> ColumnValueEncoderImpl<T> {
@@ -175,7 +176,7 @@ impl<T: DataType> ColumnValueEncoder for ColumnValueEncoderImpl<T> {
     }
 
     fn flush_bloom_filter(&mut self) -> Option<Sbbf> {
-        self.bloom_filter.take()
+        self.bloom_filter.take().map(|builder| builder.build())
     }
 
     fn try_new(descr: &ColumnDescPtr, props: &WriterProperties) -> Result<Self> {
@@ -194,8 +195,7 @@ impl<T: DataType> ColumnValueEncoder for ColumnValueEncoderImpl<T> {
 
         let bloom_filter = props
             .bloom_filter_properties(descr.path())
-            .map(|props| Sbbf::new_with_ndv_fpp(props.ndv, props.fpp))
-            .transpose()?;
+            .map(|_props| SbbfBuilder::default());
 
         Ok(Self {
             encoder,

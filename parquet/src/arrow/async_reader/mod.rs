@@ -1642,7 +1642,8 @@ mod tests {
             .await
             .unwrap()
             .unwrap();
-        assert!(sbbf.check(&"Hello"));
+        assert_ne!(sbbf.check(&"Hell"), sbbf.check(&"Hello"));
+        assert_ne!(sbbf.check(&"ello"), sbbf.check(&"Hello"));
         assert!(!sbbf.check(&"Hello_Not_Exists"));
     }
 
