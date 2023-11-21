@@ -563,6 +563,7 @@
 // under the License.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::basic::Encoding;
+<span class="kw">use </span><span class="kw">crate</span>::bloom_filter::ngram::SbbfBuilder;
 <span class="kw">use </span><span class="kw">crate</span>::bloom_filter::Sbbf;
 <span class="kw">use </span><span class="kw">crate</span>::column::writer::encoder::{ColumnValueEncoder, DataPageValues, DictionaryPage};
 <span class="kw">use </span><span class="kw">crate</span>::data_type::{AsBytes, ByteArray, Int32Type};
@@ -928,7 +929,7 @@
     dict_encoder: <span class="prelude-ty">Option</span>&lt;DictEncoder&gt;,
     min_value: <span class="prelude-ty">Option</span>&lt;ByteArray&gt;,
     max_value: <span class="prelude-ty">Option</span>&lt;ByteArray&gt;,
-    bloom_filter: <span class="prelude-ty">Option</span>&lt;Sbbf&gt;,
+    bloom_filter: <span class="prelude-ty">Option</span>&lt;SbbfBuilder&gt;,
 }
 
 <span class="kw">impl </span>ColumnValueEncoder <span class="kw">for </span>ByteArrayEncoder {
@@ -953,7 +954,7 @@
     }
 
     <span class="kw">fn </span>flush_bloom_filter(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Sbbf&gt; {
-        <span class="self">self</span>.bloom_filter.take()
+        <span class="self">self</span>.bloom_filter.take().map(|builder| builder.build())
     }
 
     <span class="kw">fn </span>try_new(descr: <span class="kw-2">&amp;</span>ColumnDescPtr, props: <span class="kw-2">&amp;</span>WriterProperties) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt;
@@ -968,8 +969,7 @@
 
         <span class="kw">let </span>bloom_filter = props
             .bloom_filter_properties(descr.path())
-            .map(|props| Sbbf::new_with_ndv_fpp(props.ndv, props.fpp))
-            .transpose()<span class="question-mark">?</span>;
+            .map(|_props| SbbfBuilder::default());
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             fallback,
