@@ -2060,7 +2060,7 @@
             metadata
                 .columns()
                 .iter()
-                .map(|col| Sbbf::read_from_column_chunk(col, chunk_reader.clone()))
+                .map(|col| Sbbf::read_from_column_chunk(col, <span class="kw-2">&amp;*</span>chunk_reader))
                 .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?
         </span>} <span class="kw">else </span>{
             iter::repeat(<span class="prelude-val">None</span>).take(metadata.columns().len()).collect()
