@@ -2750,11 +2750,6 @@
 <a href="#2750" id="2750">2750</a>
 <a href="#2751" id="2751">2751</a>
 <a href="#2752" id="2752">2752</a>
-<a href="#2753" id="2753">2753</a>
-<a href="#2754" id="2754">2754</a>
-<a href="#2755" id="2755">2755</a>
-<a href="#2756" id="2756">2756</a>
-<a href="#2757" id="2757">2757</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -4721,13 +4716,13 @@
             files,
             <span class="string">&quot;col&quot;</span>.to_string(),
             <span class="macro">vec!</span>[
-                [<span class="number">0xff</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>].as_slize(),
-                [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>].as_slice(),
-                [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].as_slice(),
-                [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>].as_slice(),
-                [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">0xff</span>].as_slice(),
+                <span class="macro">vec!</span>[<span class="number">0xff_u8</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>],
+                <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
+                <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],
+                <span class="macro">vec!</span>[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>],
+                <span class="macro">vec!</span>[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">0xff</span>],
             ],
-            <span class="macro">vec!</span>[[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>].as_slice(), [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>].as_slice()],
+            <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="number">0_u8</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>]],
         );
     }
 
@@ -4746,19 +4741,14 @@
             .iter()
             .flat_map(|v| {
                 <span class="macro">vec!</span>[
-                    [<span class="number">0xff</span>, v.as_bytes()[<span class="number">0</span>], <span class="number">0xff</span>, <span class="number">0xff</span>].as_slice(),
-                    [<span class="number">0xff</span>, <span class="number">0xff</span>, v.as_bytes()[<span class="number">0</span>], <span class="number">0xff</span>].as_slice(),
+                    <span class="macro">vec!</span>[<span class="number">0xff</span>, v.as_bytes()[<span class="number">0</span>], <span class="number">0xff</span>, <span class="number">0xff</span>],
+                    <span class="macro">vec!</span>[<span class="number">0xff</span>, <span class="number">0xff</span>, v.as_bytes()[<span class="number">0</span>], <span class="number">0xff</span>],
                 ]
                 .into_iter()
             })
             .collect();
         <span class="comment">// For null slots, empty string should not be in bloom filter.
-        </span>check_bloom_filter(
-            files,
-            <span class="string">&quot;col&quot;</span>.to_string(),
-            optional_raw_values,
-            <span class="macro">vec!</span>[[].as_slice()],
-        );
+        </span>check_bloom_filter(files, <span class="string">&quot;col&quot;</span>.to_string(), optional_raw_values, <span class="macro">vec!</span>[<span class="macro">vec!</span>[]]);
     }
 
     <span class="attr">#[test]
