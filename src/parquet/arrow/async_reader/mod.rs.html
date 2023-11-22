@@ -3377,8 +3377,8 @@
             .<span class="kw">await
             </span>.unwrap()
             .unwrap();
-        <span class="macro">assert!</span>(sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;Hell&quot;</span>));
-        <span class="macro">assert!</span>(sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;ello&quot;</span>));
+        <span class="macro">assert_ne!</span>(sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;Hell&quot;</span>), sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;Hello&quot;</span>));
+        <span class="macro">assert_ne!</span>(sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;ello&quot;</span>), sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;Hello&quot;</span>));
         <span class="macro">assert!</span>(!sbbf.check(<span class="kw-2">&amp;</span><span class="string">&quot;Hello_Not_Exists&quot;</span>));
     }
 
