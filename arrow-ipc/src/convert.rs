@@ -553,6 +553,7 @@ pub(crate) fn get_fb_field_type<'a>(
             type_: crate::LargeUtf8Builder::new(fbb).finish().as_union_value(),
             children: Some(fbb.create_vector(&empty_fields[..])),
         },
+        ConstUtf8 => unimplemented!(),
         FixedSizeBinary(len) => {
             let mut builder = crate::FixedSizeBinaryBuilder::new(fbb);
             builder.add_byteWidth(*len);

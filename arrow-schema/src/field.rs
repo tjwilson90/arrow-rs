@@ -484,6 +484,7 @@ impl Field {
             | DataType::FixedSizeBinary(_)
             | DataType::Utf8
             | DataType::LargeUtf8
+            | DataType::ConstUtf8
             | DataType::Decimal128(_, _)
             | DataType::Decimal256(_, _) => {
                 if from.data_type == DataType::Null {

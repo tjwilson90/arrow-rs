@@ -330,6 +330,10 @@ fn filter_array(values: &dyn Array, predicate: &FilterPredicate) -> Result<Array
             DataType::LargeUtf8 => {
                 Ok(Arc::new(filter_bytes(values.as_string::<i64>(), predicate)))
             }
+            DataType::ConstUtf8 => {
+                let values = values.as_const_string();
+                Ok(Arc::new(values.with_len(predicate.count())))
+            }
             DataType::Binary => {
                 Ok(Arc::new(filter_bytes(values.as_binary::<i32>(), predicate)))
             }

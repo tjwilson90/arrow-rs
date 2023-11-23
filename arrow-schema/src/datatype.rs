@@ -179,6 +179,8 @@ pub enum DataType {
     /// A single LargeUtf8 array can store up to [`i64::MAX`] bytes
     /// of string data in total
     LargeUtf8,
+    /// A repeated variable-length string in Unicode with UTF-8 encoding
+    ConstUtf8,
     /// A list of some logical data type with variable length.
     ///
     /// A single List array can store up to [`i32::MAX`] elements in total
@@ -476,7 +478,7 @@ impl DataType {
             DataType::Interval(IntervalUnit::MonthDayNano) => Some(16),
             DataType::Decimal128(_, _) => Some(16),
             DataType::Decimal256(_, _) => Some(32),
-            DataType::Utf8 | DataType::LargeUtf8 => None,
+            DataType::Utf8 | DataType::LargeUtf8 | DataType::ConstUtf8 => None,
             DataType::Binary | DataType::LargeBinary => None,
             DataType::FixedSizeBinary(_) => None,
             DataType::List(_) | DataType::LargeList(_) | DataType::Map(_, _) => None,
@@ -518,6 +520,7 @@ impl DataType {
                 | DataType::LargeBinary
                 | DataType::Utf8
                 | DataType::LargeUtf8
+                | DataType::ConstUtf8
                 | DataType::Decimal128(_, _)
                 | DataType::Decimal256(_, _) => 0,
                 DataType::Timestamp(_, s) => s.as_ref().map(|s| s.len()).unwrap_or_default(),

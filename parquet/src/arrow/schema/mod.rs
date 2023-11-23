@@ -514,6 +514,7 @@ fn arrow_to_parquet_type(field: &Field) -> Result<Type> {
                 .with_id(id)
                 .build()
         }
+        DataType::ConstUtf8 => unimplemented!(),
         DataType::List(f) | DataType::FixedSizeList(f, _) | DataType::LargeList(f) => {
             Type::group_type_builder(name)
                 .with_fields(vec![Arc::new(

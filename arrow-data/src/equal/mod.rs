@@ -95,6 +95,7 @@ fn equal_values(
         DataType::LargeUtf8 | DataType::LargeBinary => {
             variable_sized_equal::<i64>(lhs, rhs, lhs_start, rhs_start, len)
         }
+        DataType::ConstUtf8 => unreachable!(),
         DataType::FixedSizeBinary(_) => fixed_binary_equal(lhs, rhs, lhs_start, rhs_start, len),
         DataType::List(_) => list_equal::<i32>(lhs, rhs, lhs_start, rhs_start, len),
         DataType::LargeList(_) => list_equal::<i64>(lhs, rhs, lhs_start, rhs_start, len),

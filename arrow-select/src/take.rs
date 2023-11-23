@@ -143,6 +143,10 @@ fn take_impl<IndexType: ArrowPrimitiveType>(
         DataType::LargeUtf8 => {
             Ok(Arc::new(take_bytes(values.as_string::<i64>(), indices)?))
         }
+        DataType::ConstUtf8 => {
+            let values = values.as_const_string();
+            Ok(Arc::new(values.with_len(indices.len())))
+        }
         DataType::List(_) => {
             Ok(Arc::new(take_list::<_, Int32Type>(values.as_list(), indices)?))
         }

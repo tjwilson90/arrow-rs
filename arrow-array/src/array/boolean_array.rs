@@ -110,6 +110,11 @@ impl BooleanArray {
         Scalar::new(Self::new(values, None))
     }
 
+    /// Deconstruct this array into its constituent parts
+    pub fn into_parts(self) -> (BooleanBuffer, Option<NullBuffer>) {
+        (self.values, self.nulls)
+    }
+
     /// Returns the length of this array.
     pub fn len(&self) -> usize {
         self.values.len()

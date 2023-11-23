@@ -769,6 +769,14 @@ pub trait AsArray: private::Sealed {
         self.as_bytes_opt().expect("string array")
     }
 
+    /// Downcast this to a [`ConstStringArray`] returning `None` if not possible
+    fn as_const_string_opt(&self) -> Option<&ConstStringArray>;
+
+    /// Downcast this to a [`ConstStringArray`] returning `None` if not possible
+    fn as_const_string(&self) -> &ConstStringArray {
+        self.as_const_string_opt().expect("const string array")
+    }
+
     /// Downcast this to a [`GenericBinaryArray`] returning `None` if not possible
     fn as_binary_opt<O: OffsetSizeTrait>(&self) -> Option<&GenericBinaryArray<O>> {
         self.as_bytes_opt()
@@ -852,6 +860,10 @@ impl AsArray for dyn Array + '_ {
         self.as_any().downcast_ref()
     }
 
+    fn as_const_string_opt(&self) -> Option<&ConstStringArray> {
+        self.as_any().downcast_ref()
+    }
+
     fn as_struct_opt(&self) -> Option<&StructArray> {
         self.as_any().downcast_ref()
     }
@@ -897,6 +909,10 @@ impl AsArray for ArrayRef {
 
     fn as_bytes_opt<T: ByteArrayType>(&self) -> Option<&GenericByteArray<T>> {
         self.as_ref().as_bytes_opt()
+    }
+
+    fn as_const_string_opt(&self) -> Option<&ConstStringArray> {
+        self.as_ref().as_const_string_opt()
     }
 
     fn as_struct_opt(&self) -> Option<&StructArray> {

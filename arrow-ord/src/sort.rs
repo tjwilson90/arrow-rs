@@ -57,6 +57,7 @@ pub use arrow_schema::SortOptions;
 pub fn sort(values: &dyn Array, options: Option<SortOptions>) -> Result<ArrayRef, ArrowError> {
     downcast_primitive_array!(
         values => sort_native_type(values, options),
+        DataType::ConstUtf8 => Ok(Arc::new(values.as_const_string().clone())),
         DataType::RunEndEncoded(_, _) => sort_run(values, options, None),
         _ => {
             let indices = sort_to_indices(values, options, None)?;
@@ -158,11 +159,19 @@ pub fn sort_limit(
     options: Option<SortOptions>,
     limit: Option<usize>,
 ) -> Result<ArrayRef, ArrowError> {
-    if let DataType::RunEndEncoded(_, _) = values.data_type() {
-        return sort_run(values, options, limit);
+    match values.data_type() {
+        DataType::RunEndEncoded(_, _) => sort_run(values, options, limit),
+        DataType::ConstUtf8 => {
+            let values = values.as_const_string();
+            Ok(Arc::new(
+                values.with_len(limit.unwrap_or_else(|| values.len())),
+            ))
+        }
+        _ => {
+            let indices = sort_to_indices(values, options, limit)?;
+            take(values, &indices, None)
+        }
     }
-    let indices = sort_to_indices(values, options, limit)?;
-    take(values, &indices, None)
 }
 
 /// we can only do this if the T is primitive

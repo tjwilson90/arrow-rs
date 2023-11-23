@@ -267,7 +267,7 @@ pub fn data_type_to_json(data_type: &DataType) -> serde_json::Value {
         DataType::Float16 => json!({"name": "floatingpoint", "precision": "HALF"}),
         DataType::Float32 => json!({"name": "floatingpoint", "precision": "SINGLE"}),
         DataType::Float64 => json!({"name": "floatingpoint", "precision": "DOUBLE"}),
-        DataType::Utf8 => json!({"name": "utf8"}),
+        DataType::Utf8 | DataType::ConstUtf8 => json!({"name": "utf8"}),
         DataType::LargeUtf8 => json!({"name": "largeutf8"}),
         DataType::Binary => json!({"name": "binary"}),
         DataType::LargeBinary => json!({"name": "largebinary"}),

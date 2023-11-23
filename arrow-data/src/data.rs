@@ -97,7 +97,7 @@ pub(crate) fn new_buffers(data_type: &DataType, capacity: usize) -> [MutableBuff
             MutableBuffer::new(capacity * data_type.primitive_width().unwrap()),
             empty_buffer,
         ],
-        DataType::Utf8 | DataType::Binary => {
+        DataType::Utf8 | DataType::ConstUtf8 | DataType::Binary => {
             let mut buffer = MutableBuffer::new((1 + capacity) * mem::size_of::<i32>());
             // safety: `unsafe` code assumes that this buffer is initialized with one element
             buffer.push(0i32);
@@ -1539,7 +1539,7 @@ pub fn layout(data_type: &DataType) -> DataTypeLayout {
         }
         DataType::Binary => DataTypeLayout::new_binary::<i32>(),
         DataType::LargeBinary => DataTypeLayout::new_binary::<i64>(),
-        DataType::Utf8 => DataTypeLayout::new_binary::<i32>(),
+        DataType::Utf8 | DataType::ConstUtf8 => DataTypeLayout::new_binary::<i32>(),
         DataType::LargeUtf8 => DataTypeLayout::new_binary::<i64>(),
         DataType::FixedSizeList(_, _) => DataTypeLayout::new_empty(), // all in child data
         DataType::List(_) => DataTypeLayout::new_fixed_width::<i32>(),
