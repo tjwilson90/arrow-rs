@@ -692,6 +692,9 @@
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
 <a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -918,6 +921,7 @@
         DataType::Decimal256(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; primitive::build_extend::&lt;i256&gt;(array),
         DataType::Utf8 | DataType::Binary =&gt; variable_size::build_extend::&lt;i32&gt;(array),
         DataType::LargeUtf8 | DataType::LargeBinary =&gt; variable_size::build_extend::&lt;i64&gt;(array),
+        DataType::ConstUtf8 =&gt; <span class="macro">unreachable!</span>(),
         DataType::Map(<span class="kw">_</span>, <span class="kw">_</span>) | DataType::List(<span class="kw">_</span>) =&gt; list::build_extend::&lt;i32&gt;(array),
         DataType::LargeList(<span class="kw">_</span>) =&gt; list::build_extend::&lt;i64&gt;(array),
         DataType::Dictionary(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;should use build_extend_dictionary&quot;</span>),
@@ -960,6 +964,7 @@
         DataType::Decimal256(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; primitive::extend_nulls::&lt;i256&gt;,
         DataType::Utf8 | DataType::Binary =&gt; variable_size::extend_nulls::&lt;i32&gt;,
         DataType::LargeUtf8 | DataType::LargeBinary =&gt; variable_size::extend_nulls::&lt;i64&gt;,
+        DataType::ConstUtf8 =&gt; <span class="macro">unreachable!</span>(),
         DataType::Map(<span class="kw">_</span>, <span class="kw">_</span>) | DataType::List(<span class="kw">_</span>) =&gt; list::extend_nulls::&lt;i32&gt;,
         DataType::LargeList(<span class="kw">_</span>) =&gt; list::extend_nulls::&lt;i64&gt;,
         DataType::Dictionary(child_data_type, <span class="kw">_</span>) =&gt; <span class="kw">match </span>child_data_type.as_ref() {
@@ -1205,6 +1210,7 @@
                     MutableArrayData::new(child_arrays, use_nulls, array_capacity)
                 })
                 .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
+            DataType::ConstUtf8 =&gt; <span class="macro">unreachable!</span>(),
         };
 
         <span class="comment">// Get the dictionary if any, and if it is a concatenation of multiple

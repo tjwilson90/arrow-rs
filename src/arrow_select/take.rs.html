@@ -2033,6 +2033,10 @@
 <a href="#2033" id="2033">2033</a>
 <a href="#2034" id="2034">2034</a>
 <a href="#2035" id="2035">2035</a>
+<a href="#2036" id="2036">2036</a>
+<a href="#2037" id="2037">2037</a>
+<a href="#2038" id="2038">2038</a>
+<a href="#2039" id="2039">2039</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -2177,6 +2181,10 @@
         }
         DataType::LargeUtf8 =&gt; {
             <span class="prelude-val">Ok</span>(Arc::new(take_bytes(values.as_string::&lt;i64&gt;(), indices)<span class="question-mark">?</span>))
+        }
+        DataType::ConstUtf8 =&gt; {
+            <span class="kw">let </span>values = values.as_const_string();
+            <span class="prelude-val">Ok</span>(Arc::new(values.with_len(indices.len())))
         }
         DataType::List(<span class="kw">_</span>) =&gt; {
             <span class="prelude-val">Ok</span>(Arc::new(take_list::&lt;<span class="kw">_</span>, Int32Type&gt;(values.as_list(), indices)<span class="question-mark">?</span>))

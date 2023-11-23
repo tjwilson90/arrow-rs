@@ -876,6 +876,9 @@
 <a href="#876" id="876">876</a>
 <a href="#877" id="877">877</a>
 <a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -1057,6 +1060,8 @@
     /// A single LargeUtf8 array can store up to [`i64::MAX`] bytes
     /// of string data in total
     </span>LargeUtf8,
+    <span class="doccomment">/// A repeated variable-length string in Unicode with UTF-8 encoding
+    </span>ConstUtf8,
     <span class="doccomment">/// A list of some logical data type with variable length.
     ///
     /// A single List array can store up to [`i32::MAX`] elements in total
@@ -1354,7 +1359,7 @@
             DataType::Interval(IntervalUnit::MonthDayNano) =&gt; <span class="prelude-val">Some</span>(<span class="number">16</span>),
             DataType::Decimal128(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="number">16</span>),
             DataType::Decimal256(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="number">32</span>),
-            DataType::Utf8 | DataType::LargeUtf8 =&gt; <span class="prelude-val">None</span>,
+            DataType::Utf8 | DataType::LargeUtf8 | DataType::ConstUtf8 =&gt; <span class="prelude-val">None</span>,
             DataType::Binary | DataType::LargeBinary =&gt; <span class="prelude-val">None</span>,
             DataType::FixedSizeBinary(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
             DataType::List(<span class="kw">_</span>) | DataType::LargeList(<span class="kw">_</span>) | DataType::Map(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
@@ -1396,6 +1401,7 @@
                 | DataType::LargeBinary
                 | DataType::Utf8
                 | DataType::LargeUtf8
+                | DataType::ConstUtf8
                 | DataType::Decimal128(<span class="kw">_</span>, <span class="kw">_</span>)
                 | DataType::Decimal256(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="number">0</span>,
                 DataType::Timestamp(<span class="kw">_</span>, s) =&gt; s.as_ref().map(|s| s.len()).unwrap_or_default(),

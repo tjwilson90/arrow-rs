@@ -2219,7 +2219,7 @@
             MutableBuffer::new(capacity * data_type.primitive_width().unwrap()),
             empty_buffer,
         ],
-        DataType::Utf8 | DataType::Binary =&gt; {
+        DataType::Utf8 | DataType::ConstUtf8 | DataType::Binary =&gt; {
             <span class="kw">let </span><span class="kw-2">mut </span>buffer = MutableBuffer::new((<span class="number">1 </span>+ capacity) * mem::size_of::&lt;i32&gt;());
             <span class="comment">// safety: `unsafe` code assumes that this buffer is initialized with one element
             </span>buffer.push(<span class="number">0i32</span>);
@@ -3661,7 +3661,7 @@
         }
         DataType::Binary =&gt; DataTypeLayout::new_binary::&lt;i32&gt;(),
         DataType::LargeBinary =&gt; DataTypeLayout::new_binary::&lt;i64&gt;(),
-        DataType::Utf8 =&gt; DataTypeLayout::new_binary::&lt;i32&gt;(),
+        DataType::Utf8 | DataType::ConstUtf8 =&gt; DataTypeLayout::new_binary::&lt;i32&gt;(),
         DataType::LargeUtf8 =&gt; DataTypeLayout::new_binary::&lt;i64&gt;(),
         DataType::FixedSizeList(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; DataTypeLayout::new_empty(), <span class="comment">// all in child data
         </span>DataType::List(<span class="kw">_</span>) =&gt; DataTypeLayout::new_fixed_width::&lt;i32&gt;(),

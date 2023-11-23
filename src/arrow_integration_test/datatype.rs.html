@@ -634,7 +634,7 @@
         DataType::Float16 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;floatingpoint&quot;</span>, <span class="string">&quot;precision&quot;</span>: <span class="string">&quot;HALF&quot;</span>}),
         DataType::Float32 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;floatingpoint&quot;</span>, <span class="string">&quot;precision&quot;</span>: <span class="string">&quot;SINGLE&quot;</span>}),
         DataType::Float64 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;floatingpoint&quot;</span>, <span class="string">&quot;precision&quot;</span>: <span class="string">&quot;DOUBLE&quot;</span>}),
-        DataType::Utf8 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;utf8&quot;</span>}),
+        DataType::Utf8 | DataType::ConstUtf8 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;utf8&quot;</span>}),
         DataType::LargeUtf8 =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;largeutf8&quot;</span>}),
         DataType::Binary =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;binary&quot;</span>}),
         DataType::LargeBinary =&gt; <span class="macro">json!</span>({<span class="string">&quot;name&quot;</span>: <span class="string">&quot;largebinary&quot;</span>}),

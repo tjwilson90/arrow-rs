@@ -3948,6 +3948,15 @@
 <a href="#3948" id="3948">3948</a>
 <a href="#3949" id="3949">3949</a>
 <a href="#3950" id="3950">3950</a>
+<a href="#3951" id="3951">3951</a>
+<a href="#3952" id="3952">3952</a>
+<a href="#3953" id="3953">3953</a>
+<a href="#3954" id="3954">3954</a>
+<a href="#3955" id="3955">3955</a>
+<a href="#3956" id="3956">3956</a>
+<a href="#3957" id="3957">3957</a>
+<a href="#3958" id="3958">3958</a>
+<a href="#3959" id="3959">3959</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -4007,6 +4016,7 @@
 </span><span class="kw">pub fn </span>sort(values: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Array, options: <span class="prelude-ty">Option</span>&lt;SortOptions&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;ArrayRef, ArrowError&gt; {
     <span class="macro">downcast_primitive_array!</span>(
         values =&gt; sort_native_type(values, options),
+        DataType::ConstUtf8 =&gt; <span class="prelude-val">Ok</span>(Arc::new(values.as_const_string().clone())),
         DataType::RunEndEncoded(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; sort_run(values, options, <span class="prelude-val">None</span>),
         <span class="kw">_ </span>=&gt; {
             <span class="kw">let </span>indices = sort_to_indices(values, options, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
@@ -4108,11 +4118,19 @@
     options: <span class="prelude-ty">Option</span>&lt;SortOptions&gt;,
     limit: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ArrayRef, ArrowError&gt; {
-    <span class="kw">if let </span>DataType::RunEndEncoded(<span class="kw">_</span>, <span class="kw">_</span>) = values.data_type() {
-        <span class="kw">return </span>sort_run(values, options, limit);
+    <span class="kw">match </span>values.data_type() {
+        DataType::RunEndEncoded(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; sort_run(values, options, limit),
+        DataType::ConstUtf8 =&gt; {
+            <span class="kw">let </span>values = values.as_const_string();
+            <span class="prelude-val">Ok</span>(Arc::new(
+                values.with_len(limit.unwrap_or_else(|| values.len())),
+            ))
+        }
+        <span class="kw">_ </span>=&gt; {
+            <span class="kw">let </span>indices = sort_to_indices(values, options, limit)<span class="question-mark">?</span>;
+            take(values, <span class="kw-2">&amp;</span>indices, <span class="prelude-val">None</span>)
+        }
     }
-    <span class="kw">let </span>indices = sort_to_indices(values, options, limit)<span class="question-mark">?</span>;
-    take(values, <span class="kw-2">&amp;</span>indices, <span class="prelude-val">None</span>)
 }
 
 <span class="doccomment">/// we can only do this if the T is primitive

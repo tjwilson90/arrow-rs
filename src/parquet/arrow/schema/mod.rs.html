@@ -1945,6 +1945,7 @@
 <a href="#1945" id="1945">1945</a>
 <a href="#1946" id="1946">1946</a>
 <a href="#1947" id="1947">1947</a>
+<a href="#1948" id="1948">1948</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -2461,6 +2462,7 @@
                 .with_id(id)
                 .build()
         }
+        DataType::ConstUtf8 =&gt; <span class="macro">unimplemented!</span>(),
         DataType::List(f) | DataType::FixedSizeList(f, <span class="kw">_</span>) | DataType::LargeList(f) =&gt; {
             Type::group_type_builder(name)
                 .with_fields(<span class="macro">vec!</span>[Arc::new(

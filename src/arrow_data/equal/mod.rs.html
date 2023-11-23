@@ -149,6 +149,7 @@
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -246,6 +247,7 @@
         DataType::LargeUtf8 | DataType::LargeBinary =&gt; {
             variable_sized_equal::&lt;i64&gt;(lhs, rhs, lhs_start, rhs_start, len)
         }
+        DataType::ConstUtf8 =&gt; <span class="macro">unreachable!</span>(),
         DataType::FixedSizeBinary(<span class="kw">_</span>) =&gt; fixed_binary_equal(lhs, rhs, lhs_start, rhs_start, len),
         DataType::List(<span class="kw">_</span>) =&gt; list_equal::&lt;i32&gt;(lhs, rhs, lhs_start, rhs_start, len),
         DataType::LargeList(<span class="kw">_</span>) =&gt; list_equal::&lt;i64&gt;(lhs, rhs, lhs_start, rhs_start, len),

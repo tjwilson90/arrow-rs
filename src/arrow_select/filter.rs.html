@@ -1516,6 +1516,10 @@
 <a href="#1516" id="1516">1516</a>
 <a href="#1517" id="1517">1517</a>
 <a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
 </pre></div><pre class="rust"><code><span class="comment">// Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -1847,6 +1851,10 @@
             }
             DataType::LargeUtf8 =&gt; {
                 <span class="prelude-val">Ok</span>(Arc::new(filter_bytes(values.as_string::&lt;i64&gt;(), predicate)))
+            }
+            DataType::ConstUtf8 =&gt; {
+                <span class="kw">let </span>values = values.as_const_string();
+                <span class="prelude-val">Ok</span>(Arc::new(values.with_len(predicate.count())))
             }
             DataType::Binary =&gt; {
                 <span class="prelude-val">Ok</span>(Arc::new(filter_bytes(values.as_binary::&lt;i32&gt;(), predicate)))
